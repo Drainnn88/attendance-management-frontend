@@ -63,24 +63,62 @@
         <!-- Password Field (Optional) -->
         <div class="form-group">
           <label>Password (Optional)</label>
-          <input 
-            v-model="password" 
-            type="password"
-            placeholder="Leave empty to keep current password" 
-            minlength="6"
-          />
+          <div class="password-input-wrapper">
+            <input 
+              v-model="password" 
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="Leave empty to keep current password" 
+              minlength="6"
+            />
+            <button
+              type="button"
+              class="toggle-visibility"
+              :aria-label="showPassword ? 'Hide password' : 'Show password'"
+              @click="showPassword = !showPassword"
+            >
+              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94"></path>
+                <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.77 21.77 0 0 1-3.16 4.19"></path>
+                <path d="M14 14a3 3 0 0 1-4-4"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
           <small class="helper-text info">Leave empty to keep current password</small>
         </div>
 
         <!-- Confirm Password Field (Optional) -->
         <div class="form-group">
           <label>Confirm Password (Optional)</label>
-          <input 
-            v-model="confirmPassword" 
-            type="password"
-            placeholder="Leave empty to keep current password" 
-            minlength="6"
-          />
+          <div class="password-input-wrapper">
+            <input 
+              v-model="confirmPassword" 
+              :type="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Leave empty to keep current password" 
+              minlength="6"
+            />
+            <button
+              type="button"
+              class="toggle-visibility"
+              :aria-label="showConfirmPassword ? 'Hide password' : 'Show password'"
+              @click="showConfirmPassword = !showConfirmPassword"
+            >
+              <svg v-if="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.77 21.77 0 0 1 5.06-5.94"></path>
+                <path d="M9.9 4.24A10.94 10.94 0 0 1 12 5c7 0 11 7 11 7a21.77 21.77 0 0 1-3.16 4.19"></path>
+                <path d="M14 14a3 3 0 0 1-4-4"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
           <small class="helper-text info">Leave empty to keep current password</small>
           <small v-if="passwordMismatchError" class="helper-text error">{{ passwordMismatchError }}</small>
         </div>
@@ -140,6 +178,8 @@ const firstName = ref("");
 const lastName = ref("");
 const password = ref("");
 const confirmPassword = ref("");
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 const role = ref("");
 const sectionId = ref("");
 const errorMessage = ref("");
@@ -156,6 +196,8 @@ watch(() => props.user, (newUser) => {
     confirmPassword.value = '';
     role.value = newUser.role || '';
     sectionId.value = newUser.sectionId || '';
+    showPassword.value = false;
+    showConfirmPassword.value = false;
   }
 }, { immediate: true });
 
@@ -165,7 +207,8 @@ const isFormValid = computed(() => {
     role: role.value,
     sectionId: sectionId.value,
     password: password.value,
-    confirmPassword: confirmPassword.value
+    confirmPassword: confirmPassword.value,
+    passwordsMatch: password.value === confirmPassword.value
   });
   
   if (!role.value) return false;
@@ -332,6 +375,29 @@ defineExpose({ handleError });
   background-color: #f9fafb;
   color: #6b7280;
   cursor: not-allowed;
+}
+
+/* Password input with toggle */
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper .toggle-visibility {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+}
+
+.password-input-wrapper .toggle-visibility:hover {
+  text-decoration: underline;
 }
 
 /* Helper Text */
